@@ -20,5 +20,11 @@
 
 
 ## 性能测试
-1. RAM地址空间使用URAM时的性能（TODO）
+1. RAM地址空间使用URAM时的性能
+
+    读SG Buffer Desciptor，发出读地址请求后，到收到第一个数据大概6 Cycles左右
+![](./pic/AXI-TRAFFIC-GEN-to-S2MM-MAXI-SG-R-channel.png)
+
+    写URAM，发出写地址请求，到收到写Resp，一次写事务AWLen=15，大概20 Cycles左右
+![](./pic/AXI-TRAFFIC-GEN-to-S2MM-MAXI-S2MM-W-channel.png)
 2. RAM地址空间使用DRAM时的性能（TODO）
