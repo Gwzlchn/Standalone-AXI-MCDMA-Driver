@@ -20,7 +20,7 @@
  *  |    S2MM Channel2 Buffer   |
  *  +---------------------------+  100KB
  *  |    S2MM Channel1 Buffer   |
- *  +---------------------------+  96KB
+ *  +---------------------------+  0x18000 = 96KB
  *  |    MM2S Channel8 Buffer   |
  *  +---------------------------+  92KB
  *  |    MM2S Channel7 Buffer   |
@@ -34,21 +34,21 @@
  *  |    MM2S Channel3 Buffer   |
  *  +---------------------------+  72KB
  *  |    MM2S Channel2 Buffer   |
- *  +---------------------------+  68KB
+ *  +---------------------------+  0x11000 = 68KB
  *  |    MM2S Channel1 Buffer   |
- *  +---------------------------+  64KB
+ *  +---------------------------+  0x10000 = 64KB
  *  |                           |
  *  ~                           ~  the size of the BD buffer for each S2MM channel is 2KB
  *  |         S2MM BD           |
- *  +---------------------------+  32KB
+ *  +---------------------------+  32KB = 0x8000
  *  |                           |
  *  ~                           ~  the size of the BD buffer for each MM2S channel is 2KB
  *  |         MM2S BD           |
  *  +---------------------------+  0
  */
 
-#ifndef _RAM_ADDR_H_
-#define _RAM_ADDR_H_
+#ifndef _RAM_MEM_LAYOUT_H_
+#define _RAM_MEM_LAYOUT_H_
 
 #define RAM_BASE_ADDR 0x86000000
 #define RAM_TOTAL_SIZE (1 << 21)  // 2MB
@@ -57,15 +57,20 @@
 #define RAM_SG_MM2S_BD_BASE (0x0)
 #define RAM_SG_MM2S_BD_TOTAL_RANGE (1 << 15)        // 32KB=0x8000, 32KB/64B = 512
 #define RAM_SG_MM2S_BD_SINGLE_CHAN_RANGE (1 << 11)  // 2KB=0x800, 2KB/64B = 32
+#define RAM_SG_MM2S_CHX_BD(chan, desc)                                                             \
+  (RAM_SG_MM2S_BD_BASE + (chan)*RAM_SG_MM2S_BD_SINGLE_CHAN_RANGE + 0x40 * (desc))
 
 #define RAM_SG_S2MM_BD_BASE (RAM_SG_MM2S_BD_BASE + RAM_SG_MM2S_BD_TOTAL_RANGE)
 #define RAM_SG_S2MM_BD_TOTAL_RANGE (1 << 15)        // 32KBs
 #define RAM_SG_S2MM_BD_SINGLE_CHAN_RANGE (1 << 11)  // 2KB, 2KB/64B = 32
+#define RAM_SG_S2MM_CHX_BD(chan, desc)                                                             \
+  (RAM_SG_S2MM_BD_BASE + (chan)*RAM_SG_S2MM_BD_SINGLE_CHAN_RANGE + 0x40 * (desc))
 
 // MM2S Channels, shell read data from RAM to network-stack
 #define MM2S_DATA_BUFFER_BASE_ADDR 0x10000         // 64KB
 #define MM2S_DATA_BUFFER_RANGE_SINGLE_CHAN 0x1000  // 4KB
-
+#define RAM_MM2S_DATA_CHX_BASE(chan)                                                               \
+  (MM2S_DATA_BUFFER_BASE_ADDR + (chan)*MM2S_DATA_BUFFER_RANGE_SINGLE_CHAN)
 #define MM2S_CH1_BUFFER_ADDR 0x10000    // 64KB
 #define MM2S_CH1_SINGLE_DATA_BYTES 0x4  // 4Bytes
 #define MM2S_CH2_BUFFER_ADDR 0x11000    // 68KB
@@ -80,6 +85,8 @@
 // S2MMM Channels, network-stack write data to RAM
 #define S2MM_DATA_BUFFER_BASE_ADDR 0x20000         // 128KB
 #define S2MM_DATA_BUFFER_RANGE_SINGLE_CHAN 0x1000  // 4KB
+#define RAM_S2MM_DATA_CHX_BASE(chan)                                                               \
+  (S2MM_DATA_BUFFER_BASE_ADDR + (chan)*S2MM_DATA_BUFFER_RANGE_SINGLE_CHAN)
 
 #define S2MM_CH1_BUFFER_ADDR 0x20000  // 128KB
 #define S2MM_CH1_SINGLE_DATA_BYTES 0x2
